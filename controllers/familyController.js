@@ -1,4 +1,4 @@
-import { Family, Member, User } from '../models/index.js';
+import { Family, Member, User, Village } from '../models/index.js';
 import { recalculateVillageStats } from '../services/statsService.js';
 
 // @desc    Get families by village, optionally filtered by atak, city, or search
@@ -108,8 +108,28 @@ export const createFamily = async (req, res, next) => {
             });
         }
 
+        // Fetch village to ensure nativeVillage and currentCity default to this village if not specified
+        const villageDoc = await Village.findById(villageId);
+        const vGu = villageDoc?.name?.gu || '';
+        const vEn = villageDoc?.name?.en || '';
+
+        const incomingAddress = req.body.address || {};
+        const nativeVillage = {
+            gu: incomingAddress.nativeVillage?.gu || vGu,
+            en: incomingAddress.nativeVillage?.en || vEn
+        };
+        const currentCity = {
+            gu: incomingAddress.currentCity?.gu || vGu,
+            en: incomingAddress.currentCity?.en || vEn
+        };
+
         const family = await Family.create({
             ...req.body,
+            address: {
+                ...incomingAddress,
+                nativeVillage,
+                currentCity
+            },
             submittedBy: req.user?._id || null,
             verificationStatus: 'approved'
         });

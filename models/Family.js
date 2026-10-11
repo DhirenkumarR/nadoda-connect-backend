@@ -38,12 +38,12 @@ const FamilySchema = new Schema(
         },
         address: {
             nativeVillage: {
-                gu: { type: String, default: 'બાસ્પા' },
-                en: { type: String, default: 'Baspa' }
+                gu: { type: String, default: '' },
+                en: { type: String, default: '' }
             },
             currentCity: {
-                gu: { type: String, default: 'બાસ્પા' }, // e.g., "બાસ્પા", "અમદાવાદ", "ગાંધીધામ", "સુરત"
-                en: { type: String, default: 'Baspa' }
+                gu: { type: String, default: '' }, // e.g., Native Village Name or "અમદાવાદ", "ગાંધીધામ", "સુરત"
+                en: { type: String, default: '' }
             },
             streetAddress: { type: String, default: '' }
         },
