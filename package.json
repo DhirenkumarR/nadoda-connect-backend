@@ -1,0 +1,23 @@
+{
+  "name": "nadoda-connect-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Nadoda Rajput Community Platform (Nadoda Connect)",
+  "license": "ISC",
+  "author": "Dhiren Rathod",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "seed": "node seeders/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^8.9.5",
+    "nodemailer": "^10.1.0"
+  }
+}

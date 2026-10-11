@@ -1,0 +1,540 @@
+[
+  {
+    "houseNumber": 1,
+    "atak": { "gu": "ચાવડા", "en": "Chavda" },
+    "kuldevi": { "gu": "શ્રી આશાપુરા માતાજી", "en": "Shree Ashapura Mataji" },
+    "primaryMobile": "9824406691",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "બાસ્પા", "en": "Baspa" }
+    },
+    "members": [
+      {
+        "serialNumber": 1,
+        "memberOrder": 1,
+        "fullName": { "gu": "ચાવડા કાંતિભાઈ કરમણભાઈ", "en": "Chavda Kantibhai Karmanbhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 41,
+        "education": { "qualification": "10", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ખેતી", "category": "agriculture", "workCity": "બાસ્પા" },
+        "mobileNumber": "9824406691",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 2,
+        "memberOrder": 2,
+        "fullName": { "gu": "ચાવડા અનસોયાબેન કાંતિભાઈ", "en": "Chavda Ansoyaben Kantibhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 40,
+        "education": { "qualification": "8", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 3,
+        "memberOrder": 3,
+        "fullName": { "gu": "ચાવડા વૈદિકકુમાર કાંતિભાઈ", "en": "Chavda Vaidikkumar Kantibhai" },
+        "relationWithHead": { "gu": "પુત્ર", "en": "Son" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 15,
+        "education": { "qualification": "ચાલુ", "isStudying": true },
+        "maritalStatus": { "key": "unmarried", "gu": "અપરણિત" },
+        "occupation": { "title": "અભ્યાસ", "category": "student", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 2,
+    "atak": { "gu": "ચાવડા", "en": "Chavda" },
+    "kuldevi": { "gu": "શ્રી આશાપુરા માતાજી", "en": "Shree Ashapura Mataji" },
+    "primaryMobile": "9426881127",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "બાસ્પા", "en": "Baspa" }
+    },
+    "members": [
+      {
+        "serialNumber": 4,
+        "memberOrder": 1,
+        "fullName": { "gu": "ચાવડા અરજણભાઈ કરમણભાઈ", "en": "Chavda Arjanbhai Karmanbhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 50,
+        "education": { "qualification": "8", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "અભ્યાસ", "category": "other", "workCity": "બાસ્પા" },
+        "mobileNumber": "9426881127",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 5,
+        "memberOrder": 2,
+        "fullName": { "gu": "ચાવડા મધુબેન અરજણભાઈ", "en": "Chavda Madhuben Arjanbhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 49,
+        "education": { "qualification": "4", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 6,
+        "memberOrder": 3,
+        "fullName": { "gu": "ચાવડા દિલીપ અરજણભાઈ", "en": "Chavda Dilip Arjanbhai" },
+        "relationWithHead": { "gu": "પુત્ર", "en": "Son" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 26,
+        "education": { "qualification": "10", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ખેતી", "category": "agriculture", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 7,
+        "memberOrder": 4,
+        "fullName": { "gu": "ચાવડા જનકબેન દિલીપકુમાર", "en": "Chavda Janakben Dilipkumar" },
+        "relationWithHead": { "gu": "પુત્રવધુ", "en": "Daughter-in-law" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 24,
+        "education": { "qualification": "8", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 4,
+    "atak": { "gu": "ચાવડા", "en": "Chavda" },
+    "kuldevi": { "gu": "શ્રી આશાપુરા માતાજી", "en": "Shree Ashapura Mataji" },
+    "primaryMobile": "9427682068",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "રાધનપુર", "en": "Radhanpur" }
+    },
+    "members": [
+      {
+        "serialNumber": 13,
+        "memberOrder": 1,
+        "fullName": { "gu": "ચાવડા માદેવભાઈ મોતીભાઈ", "en": "Chavda Madevbhai Motibhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 62,
+        "education": { "qualification": "10", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "નોકરી પ્રાઇવેટ", "category": "private_job", "workCity": "રાધનપુર" },
+        "mobileNumber": "9427682068",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 14,
+        "memberOrder": 2,
+        "fullName": { "gu": "ચાવડા પશીબેન માદેવભાઈ", "en": "Chavda Pashiben Madevbhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 60,
+        "education": { "qualification": "5", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 15,
+        "memberOrder": 3,
+        "fullName": { "gu": "ચાવડા વિજયભાઈ માદેવભાઈ", "en": "Chavda Vijaybhai Madevbhai" },
+        "relationWithHead": { "gu": "પુત્ર", "en": "Son" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 41,
+        "education": { "qualification": "બી.એડ.", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "માધ્યમિક શિક્ષક", "category": "govt_job", "workCity": "કુકરવાડા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 16,
+        "memberOrder": 4,
+        "fullName": { "gu": "ચાવડા મીનાબેન વિજયભાઈ", "en": "Chavda Minaben Vijaybhai" },
+        "relationWithHead": { "gu": "પુત્રવધુ", "en": "Daughter-in-law" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 40,
+        "education": { "qualification": "8", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 17,
+        "memberOrder": 5,
+        "fullName": { "gu": "ચાવડા કૃપાલ વિજયભાઈ", "en": "Chavda Krupal Vijaybhai" },
+        "relationWithHead": { "gu": "પૌત્ર", "en": "Grandson" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 14,
+        "education": { "qualification": "ચાલુ", "isStudying": true },
+        "maritalStatus": { "key": "unmarried", "gu": "અપરણિત" },
+        "occupation": { "title": "અભ્યાસ", "category": "student", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 104,
+    "atak": { "gu": "ડાભી", "en": "Dabhi" },
+    "kuldevi": { "gu": "શ્રી મોમાય માતાજી", "en": "Shree Momai Mataji" },
+    "primaryMobile": "9664744605",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "હારીજ", "en": "Harij" }
+    },
+    "members": [
+      {
+        "serialNumber": 510,
+        "memberOrder": 1,
+        "fullName": { "gu": "ડાભી પરબતભાઈ શંકરભાઈ", "en": "Dabhi Parbatbhai Shankarbhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 42,
+        "education": { "qualification": "બી.એ.", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "કંડક્ટર", "category": "govt_job", "workCity": "હારીજ ડેપો" },
+        "mobileNumber": "9664744605",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 511,
+        "memberOrder": 2,
+        "fullName": { "gu": "ડાભી વર્ષાબેન પરબતભાઈ", "en": "Dabhi Varshaben Parbatbhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 40,
+        "education": { "qualification": "8", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 512,
+        "memberOrder": 3,
+        "fullName": { "gu": "ડાભી રોહિતકુમાર પરબતભાઈ", "en": "Dabhi Rohitkumar Parbatbhai" },
+        "relationWithHead": { "gu": "પુત્ર", "en": "Son" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 13,
+        "education": { "qualification": "ચાલુ", "isStudying": true },
+        "maritalStatus": { "key": "unmarried", "gu": "અપરણિત" },
+        "occupation": { "title": "અભ્યાસ", "category": "student", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 513,
+        "memberOrder": 4,
+        "fullName": { "gu": "ડાભી જેન્સીબેન પરબતભાઈ", "en": "Dabhi Jensiben Parbatbhai" },
+        "relationWithHead": { "gu": "પુત્રી", "en": "Daughter" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 3,
+        "education": { "qualification": "-", "isStudying": false },
+        "maritalStatus": { "key": "unmarried", "gu": "અપરણિત" },
+        "occupation": { "title": "-", "category": "other", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 514,
+        "memberOrder": 5,
+        "fullName": { "gu": "ડાભી બબીબેન શંકરભાઈ", "en": "Dabhi Babiben Shankarbhai" },
+        "relationWithHead": { "gu": "માતા", "en": "Mother" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 65,
+        "education": { "qualification": "-", "isStudying": false },
+        "maritalStatus": { "key": "widow", "gu": "વિધવા" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 515,
+        "memberOrder": 6,
+        "fullName": { "gu": "ડાભી લાલાભાઈ શંકરભાઈ", "en": "Dabhi Lalabhai Shankarbhai" },
+        "relationWithHead": { "gu": "ભાઈ", "en": "Brother" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 40,
+        "education": { "qualification": "10", "isStudying": false },
+        "maritalStatus": { "key": "unmarried", "gu": "અપરણિત" },
+        "occupation": { "title": "ખેતી", "category": "agriculture", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 128,
+    "atak": { "gu": "સિંધવ", "en": "Sindhav" },
+    "kuldevi": { "gu": "શ્રી સિંધવાઈ માતાજી", "en": "Shree Sindhuvai Mataji" },
+    "primaryMobile": "9723567486",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "રાધનપુર", "en": "Radhanpur" }
+    },
+    "members": [
+      {
+        "serialNumber": 620,
+        "memberOrder": 1,
+        "fullName": { "gu": "સિંધવ સોમાભાઈ લક્ષ્મણભાઈ", "en": "Sindhav Somabhai Laxmanbhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 38,
+        "education": { "qualification": "8", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "વેપાર", "category": "business", "workCity": "રાધનપુર" },
+        "mobileNumber": "9723567486",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 621,
+        "memberOrder": 2,
+        "fullName": { "gu": "સિંધવ હંસાબેન સોમાભાઈ", "en": "Sindhav Hansaben Somabhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 35,
+        "education": { "qualification": "5", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "રાધનપુર" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 622,
+        "memberOrder": 3,
+        "fullName": { "gu": "સિંધવ શ્રદ્ધાબા સોમાભાઈ", "en": "Sindhav Shraddhaba Somabhai" },
+        "relationWithHead": { "gu": "પુત્રી", "en": "Daughter" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 18,
+        "education": { "qualification": "12", "isStudying": true },
+        "maritalStatus": { "key": "unmarried", "gu": "અપરણિત" },
+        "occupation": { "title": "અભ્યાસ", "category": "student", "workCity": "રાધનપુર" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 145,
+    "atak": { "gu": "રાઠોડ", "en": "Rathod" },
+    "kuldevi": { "gu": "શ્રી વડેચી માતાજી", "en": "Shree Vadechi Mataji" },
+    "primaryMobile": "982539436",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "ચીખલી", "en": "Chikhli" }
+    },
+    "members": [
+      {
+        "serialNumber": 707,
+        "memberOrder": 1,
+        "fullName": { "gu": "રાઠોડ કનુભાઈ રણમલભાઈ", "en": "Rathod Kanubhai Ranmalbhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 60,
+        "education": { "qualification": "BAMS", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ડોક્ટર", "category": "professional", "workCity": "ચીખલી" },
+        "mobileNumber": "982539436",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 708,
+        "memberOrder": 2,
+        "fullName": { "gu": "રાઠોડ મંજુલાબેન કનુભાઈ", "en": "Rathod Manjulaben Kanubhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 59,
+        "education": { "qualification": "6", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "ચીખલી" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 709,
+        "memberOrder": 3,
+        "fullName": { "gu": "રાઠોડ ધર્મેન્દ્રભાઈ કનુભાઈ", "en": "Rathod Dharmendrabhai Kanubhai" },
+        "relationWithHead": { "gu": "પુત્ર", "en": "Son" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 36,
+        "education": { "qualification": "Engineering", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "એન્જીનીયર", "category": "professional", "workCity": "ભરૂચ" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 712,
+        "memberOrder": 6,
+        "fullName": { "gu": "રાઠોડ સમ્રાટ કનુભાઈ", "en": "Rathod Samrat Kanubhai" },
+        "relationWithHead": { "gu": "પુત્ર", "en": "Son" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 30,
+        "education": { "qualification": "MBBS", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ડોક્ટર", "category": "professional", "workCity": "ભરૂચ" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 152,
+    "atak": { "gu": "ખેર", "en": "Kher" },
+    "kuldevi": { "gu": "શ્રી લાલબાઈ માતાજી", "en": "Shree Lalbai Mataji" },
+    "primaryMobile": "9428620682",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "અમરેલી", "en": "Amreli" }
+    },
+    "members": [
+      {
+        "serialNumber": 745,
+        "memberOrder": 1,
+        "fullName": { "gu": "ખેર રાજુભાઈ પરબતભાઈ", "en": "Kher Rajubhai Parbatbhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 61,
+        "education": { "qualification": "7", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "નોકરી પ્રાઇવેટ", "category": "private_job", "workCity": "અમરેલી" },
+        "mobileNumber": "9428620682",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 746,
+        "memberOrder": 2,
+        "fullName": { "gu": "ખેર પશીબેન રાજુભાઈ", "en": "Kher Pashiben Rajubhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 60,
+        "education": { "qualification": "3", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "અમરેલી" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 160,
+    "atak": { "gu": "દેસાઈ", "en": "Desai" },
+    "kuldevi": { "gu": "શ્રી મોમાય માતાજી", "en": "Shree Momai Mataji" },
+    "primaryMobile": "9638639023",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "ગાંધીધામ", "en": "Gandhidham" }
+    },
+    "members": [
+      {
+        "serialNumber": 777,
+        "memberOrder": 1,
+        "fullName": { "gu": "દેસાઈ રણછોડભાઈ હરીભાઈ", "en": "Desai Ranchhodbhai Haribhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 67,
+        "education": { "qualification": "-", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "મજુરીકામ", "category": "labour", "workCity": "ગાંધીધામ" },
+        "mobileNumber": "9638639023",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 778,
+        "memberOrder": 2,
+        "fullName": { "gu": "દેસાઈ રૂખીબેન રણછોડભાઈ", "en": "Desai Rukhiben Ranchhodbhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 66,
+        "education": { "qualification": "-", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "ગાંધીધામ" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 167,
+    "atak": { "gu": "ગોહિલ", "en": "Gohil" },
+    "kuldevi": { "gu": "શ્રી લીંબોજ માતાજી", "en": "Shree Limboj Mataji" },
+    "primaryMobile": "989896149",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "બાસ્પા", "en": "Baspa" }
+    },
+    "members": [
+      {
+        "serialNumber": 805,
+        "memberOrder": 1,
+        "fullName": { "gu": "ગોહિલ નરેન્દ્રકુમાર બચુભાઈ", "en": "Gohil Narendrakumar Bachubhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 34,
+        "education": { "qualification": "બી.એ.", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ખેતી", "category": "agriculture", "workCity": "બાસ્પા" },
+        "mobileNumber": "989896149",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 806,
+        "memberOrder": 2,
+        "fullName": { "gu": "ગોહિલ કાંચનબેન નરેન્દ્રકુમાર", "en": "Gohil Kanchanben Narendrakumar" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 32,
+        "education": { "qualification": "10", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      }
+    ]
+  },
+  {
+    "houseNumber": 170,
+    "atak": { "gu": "ડોડીયા", "en": "Dodiya" },
+    "kuldevi": { "gu": "શ્રી વેરાઈ માતાજી", "en": "Shree Verai Mataji" },
+    "primaryMobile": "9925622717",
+    "address": {
+      "nativeVillage": { "gu": "બાસ્પા", "en": "Baspa" },
+      "currentCity": { "gu": "બાસ્પા", "en": "Baspa" }
+    },
+    "members": [
+      {
+        "serialNumber": 822,
+        "memberOrder": 1,
+        "fullName": { "gu": "ડોડીયા લખમણભાઈ ચેહાભાઈ", "en": "Dodiya Lakhamanbhai Chehabhai" },
+        "relationWithHead": { "gu": "પોતે", "en": "Self" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 46,
+        "education": { "qualification": "8", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ફેબ્રિકેશન", "category": "business", "workCity": "બાસ્પા" },
+        "mobileNumber": "9925622717",
+        "isFamilyHead": true
+      },
+      {
+        "serialNumber": 823,
+        "memberOrder": 2,
+        "fullName": { "gu": "ડોડીયા વાલીબેન લખમણભાઈ", "en": "Dodiya Valiben Lakhamanbhai" },
+        "relationWithHead": { "gu": "પત્ની", "en": "Wife" },
+        "gender": { "key": "female", "gu": "સ્ત્રી" },
+        "age": 44,
+        "education": { "qualification": "3", "isStudying": false },
+        "maritalStatus": { "key": "married", "gu": "પરણિત" },
+        "occupation": { "title": "ઘરકામ", "category": "homemaker", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      },
+      {
+        "serialNumber": 824,
+        "memberOrder": 3,
+        "fullName": { "gu": "ડોડીયા પારસભાઈ લખમણભાઈ", "en": "Dodiya Parasbhai Lakhamanbhai" },
+        "relationWithHead": { "gu": "પુત્ર", "en": "Son" },
+        "gender": { "key": "male", "gu": "પુરુષ" },
+        "age": 24,
+        "education": { "qualification": "બી.એસસી.", "isStudying": false },
+        "maritalStatus": { "key": "unmarried", "gu": "અપરણિત" },
+        "occupation": { "title": "અભ્યાસ", "category": "student", "workCity": "બાસ્પા" },
+        "isFamilyHead": false
+      }
+    ]
+  }
+]

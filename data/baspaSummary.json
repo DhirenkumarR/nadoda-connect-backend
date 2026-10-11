@@ -1,0 +1,92 @@
+{
+  "village": {
+    "name": {
+      "gu": "બાસ્પા",
+      "en": "Baspa"
+    },
+    "slug": "baspa",
+    "taluka": {
+      "gu": "સમી",
+      "en": "Sami"
+    },
+    "district": {
+      "gu": "પાટણ",
+      "en": "Patan"
+    },
+    "state": {
+      "gu": "ગુજરાત",
+      "en": "Gujarat"
+    },
+    "pincode": "384245",
+    "totalHouses": 171,
+    "totalMale": 445,
+    "totalFemale": 384,
+    "totalMembers": 829
+  },
+  "ataks": [
+    {
+      "atak": { "gu": "ચાવડા", "en": "Chavda" },
+      "kuldevi": { "gu": "શ્રી આશાપુરા માતાજી", "en": "Shree Ashapura Mataji" },
+      "totalHouses": 103,
+      "totalMale": 278,
+      "totalFemale": 231,
+      "totalMembers": 509
+    },
+    {
+      "atak": { "gu": "ડાભી", "en": "Dabhi" },
+      "kuldevi": { "gu": "શ્રી મોમાય માતાજી", "en": "Shree Momai Mataji" },
+      "totalHouses": 24,
+      "totalMale": 60,
+      "totalFemale": 50,
+      "totalMembers": 110
+    },
+    {
+      "atak": { "gu": "સિંધવ", "en": "Sindhav" },
+      "kuldevi": { "gu": "શ્રી સિંધવાઈ માતાજી", "en": "Shree Sindhuvai Mataji" },
+      "totalHouses": 15,
+      "totalMale": 36,
+      "totalFemale": 40,
+      "totalMembers": 76
+    },
+    {
+      "atak": { "gu": "રાઠોડ", "en": "Rathod" },
+      "kuldevi": { "gu": "શ્રી વડેચી માતાજી", "en": "Shree Vadechi Mataji" },
+      "totalHouses": 9,
+      "totalMale": 25,
+      "totalFemale": 24,
+      "totalMembers": 49
+    },
+    {
+      "atak": { "gu": "ખેર", "en": "Kher" },
+      "kuldevi": { "gu": "શ્રી લાલબાઈ માતાજી", "en": "Shree Lalbai Mataji" },
+      "totalHouses": 8,
+      "totalMale": 18,
+      "totalFemale": 14,
+      "totalMembers": 32
+    },
+    {
+      "atak": { "gu": "દેસાઈ", "en": "Desai" },
+      "kuldevi": { "gu": "શ્રી મોમાય માતાજી", "en": "Shree Momai Mataji" },
+      "totalHouses": 7,
+      "totalMale": 15,
+      "totalFemale": 13,
+      "totalMembers": 28
+    },
+    {
+      "atak": { "gu": "ગોહિલ", "en": "Gohil" },
+      "kuldevi": { "gu": "શ્રી લીંબોજ માતાજી", "en": "Shree Limboj Mataji" },
+      "totalHouses": 3,
+      "totalMale": 8,
+      "totalFemale": 9,
+      "totalMembers": 17
+    },
+    {
+      "atak": { "gu": "ડોડીયા", "en": "Dodiya" },
+      "kuldevi": { "gu": "શ્રી વેરાઈ માતાજી", "en": "Shree Verai Mataji" },
+      "totalHouses": 2,
+      "totalMale": 5,
+      "totalFemale": 3,
+      "totalMembers": 8
+    }
+  ]
+}
