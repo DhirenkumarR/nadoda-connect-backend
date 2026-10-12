@@ -49,7 +49,7 @@ const generateOtpEmailHtml = ({ userName, otp, hasLogo }) => {
                     : '<div style="display:inline-block;width:48px;height:48px;line-height:48px;background:linear-gradient(135deg,#F59E0B,#B45309);color:#0F172A;font-size:24px;font-weight:bold;border-radius:12px;margin-bottom:12px;">ના</div>'
                 }
                 <h2 class="title">શ્રી નાડોદા રાજપૂત સમાજ</h2>
-                <div class="subtitle">Nadoda Connect - પાસવર્ડ વેરિફિકેશન</div>
+                <div class="subtitle">Nadoda Rajput Connect - પાસવર્ડ વેરિફિકેશન</div>
             </div>
             <div class="content">
                 <p>નમસ્તે <strong>${userName}</strong>,</p>
@@ -60,7 +60,7 @@ const generateOtpEmailHtml = ({ userName, otp, hasLogo }) => {
                 <p style="font-size: 13px; color: #94A3B8;">આ કોડ <strong>૧૫ મિનિટ</strong> માટે માન્ય છે. સુરક્ષા ખાતર આ કોડ કોઈની સાથે શેર કરશો નહીં.</p>
             </div>
             <div class="footer">
-                શ્રી નાડોદા રાજપૂત સમાજ ડિજિટલ ડિરેક્ટરી પ્લેટફોર્મ • Nadoda Connect
+                શ્રી નાડોદા રાજપૂત સમાજ ડિજિટલ ડિરેક્ટરી પ્લેટફોર્મ • Nadoda Rajput Connect
             </div>
         </div>
     </body>
@@ -75,7 +75,7 @@ const sendViaResend = async ({ to, userName, otp, subject, html }) => {
     const apiKey = (process.env.RESEND_API_KEY || '').trim();
     if (!apiKey) return null;
 
-    const fromAddress = process.env.RESEND_FROM || 'Nadoda Connect <onboarding@resend.dev>';
+    const fromAddress = process.env.RESEND_FROM || 'Nadoda Rajput Connect <onboarding@resend.dev>';
 
     const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -150,7 +150,7 @@ const sendViaSmtp = async ({ to, userName, otp, subject, html, logoPath, hasLogo
     }
 
     const mailOptions = {
-        from: `"શ્રી નાડોદા રાજપૂત સમાજ (Nadoda Connect)" <${user}>`,
+        from: `"શ્રી નાડોદા રાજપૂત સમાજ (Nadoda Rajput Connect)" <${user}>`,
         to,
         subject,
         attachments: hasLogo ? [
@@ -219,7 +219,7 @@ const sendViaSmtp = async ({ to, userName, otp, subject, html, logoPath, hasLogo
 export const sendOtpEmail = async ({ to, userName = 'સભ્ય', otp }) => {
     const logoPath = getLogoPath();
     const hasLogo = Boolean(logoPath);
-    const subject = `[Nadoda Connect] તમારો વેરિફિકેશન કોડ છે: ${otp}`;
+    const subject = `[Nadoda Rajput Connect] તમારો વેરિફિકેશન કોડ છે: ${otp}`;
     const html = generateOtpEmailHtml({ userName, otp, hasLogo });
 
     // 1. Check HTTP-based providers (Resend API)

@@ -1,7 +1,7 @@
 {
   "name": "nadoda-connect-backend",
   "version": "1.0.0",
-  "description": "Backend API for Nadoda Rajput Community Platform (Nadoda Connect)",
+  "description": "Backend API for Nadoda Rajput Community Platform (Nadoda Rajput Connect)",
   "license": "ISC",
   "author": "Dhiren Rathod",
   "type": "module",

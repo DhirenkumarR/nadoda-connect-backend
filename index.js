@@ -18,7 +18,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.json({
         success: true,
-        message: 'Nadoda Connect API is running',
+        message: 'Nadoda Rajput Connect API is running',
         version: '1.0.0'
     });
 });
@@ -34,7 +34,7 @@ const startServer = async () => {
     try {
         await connectDB();
         app.listen(PORT, () => {
-            console.log(`[Server] Nadoda Connect server listening on port ${PORT}`);
+            console.log(`[Server] Nadoda Rajput Connect server listening on port ${PORT}`);
         });
     } catch (error) {
         console.error('[Server] Failed to start:', error.message);
