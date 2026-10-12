@@ -111,6 +111,15 @@ export const login = async (req, res, next) => {
             }
         }
 
+        // Record login activity
+        const now = new Date();
+        user.lastLoginAt = now;
+        user.lastActiveAt = now;
+        const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress;
+        if (ip) user.lastIpAddress = String(ip).split(',')[0].trim();
+        if (req.headers['user-agent']) user.lastUserAgent = req.headers['user-agent'];
+        await user.save();
+
         const token = generateToken(user);
         const userObj = user.toObject();
         delete userObj.passwordHash;
@@ -374,6 +383,16 @@ export const setPassword = async (req, res, next) => {
                 updatedUser = await User.findById(updatedUser._id).populate('assignedVillageId');
             }
         }
+
+        // Record login activity
+        const now = new Date();
+        updatedUser.lastLoginAt = now;
+        updatedUser.lastActiveAt = now;
+        const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress;
+        if (ip) updatedUser.lastIpAddress = String(ip).split(',')[0].trim();
+        if (req.headers['user-agent']) updatedUser.lastUserAgent = req.headers['user-agent'];
+        await updatedUser.save();
+
         const token = generateToken(updatedUser);
 
         res.status(200).json({
@@ -854,6 +873,185 @@ export const createUserFromMember = async (req, res, next) => {
             success: true,
             message: `સભ્ય (${targetName}) માટે યુઝર એકાઉન્ટ સફળતાપૂર્વક બની ગયું છે!`,
             data: populatedNewUser
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Helper to parse clean user-agent details
+const parseDevice = (userAgent) => {
+    if (!userAgent) return { device: 'Desktop', browser: 'Web Browser', os: 'Unknown' };
+    let device = 'Desktop';
+    if (/mobile/i.test(userAgent)) device = 'Mobile';
+    else if (/tablet|ipad/i.test(userAgent)) device = 'Tablet';
+
+    let browser = 'Chrome';
+    if (/edg/i.test(userAgent)) browser = 'Edge';
+    else if (/chrome|crios/i.test(userAgent)) browser = 'Chrome';
+    else if (/firefox|fxios/i.test(userAgent)) browser = 'Firefox';
+    else if (/safari/i.test(userAgent)) browser = 'Safari';
+
+    let os = 'Windows';
+    if (/android/i.test(userAgent)) os = 'Android';
+    else if (/iphone|ipad|ipod/i.test(userAgent)) os = 'iOS';
+    else if (/windows/i.test(userAgent)) os = 'Windows';
+    else if (/macintosh|mac os x/i.test(userAgent)) os = 'macOS';
+    else if (/linux/i.test(userAgent)) os = 'Linux';
+
+    return { device, browser, os };
+};
+
+// @desc    Heartbeat to keep user session marked as active
+// @route   POST /api/auth/heartbeat
+export const heartbeat = async (req, res) => {
+    try {
+        if (req.user) {
+            const now = new Date();
+            const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress;
+            const cleanIp = ip ? String(ip).split(',')[0].trim() : null;
+            await User.findByIdAndUpdate(req.user._id, {
+                lastActiveAt: now,
+                ...(cleanIp ? { lastIpAddress: cleanIp } : {}),
+                ...(req.headers['user-agent'] ? { lastUserAgent: req.headers['user-agent'] } : {})
+            });
+        }
+        res.status(200).json({ success: true, timestamp: new Date() });
+    } catch (error) {
+        res.status(200).json({ success: true });
+    }
+};
+
+// @desc    Logout user and mark session ended
+// @route   POST /api/auth/logout
+export const logout = async (req, res) => {
+    try {
+        if (req.user) {
+            await User.findByIdAndUpdate(req.user._id, {
+                lastLogoutAt: new Date()
+            });
+        }
+        res.status(200).json({ success: true, message: 'Logged out successfully' });
+    } catch (error) {
+        res.status(200).json({ success: true });
+    }
+};
+
+// @desc    Get currently logged in users and active sessions (Super Admin only)
+// @route   GET /api/auth/active-sessions
+export const getActiveSessions = async (req, res, next) => {
+    try {
+        const now = new Date();
+        const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
+        const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+        // Fetch users who have either logged in or been active, sorted by recent activity
+        const users = await User.find({
+            $or: [
+                { lastActiveAt: { $ne: null } },
+                { lastLoginAt: { $ne: null } }
+            ]
+        })
+            .populate('assignedVillageId', 'name slug taluka district')
+            .populate('memberId', 'fullName mobileNumber serialNumber houseNumber')
+            .sort({ lastActiveAt: -1, lastLoginAt: -1 })
+            .limit(100);
+
+        let onlineCount = 0;
+        let activeTodayCount = 0;
+        let onlineAdminsCount = 0;
+
+        const sessionList = users.map((u) => {
+            const lastActive = u.lastActiveAt ? new Date(u.lastActiveAt) : null;
+            const lastLogin = u.lastLoginAt ? new Date(u.lastLoginAt) : null;
+            const lastLogout = u.lastLogoutAt ? new Date(u.lastLogoutAt) : null;
+
+            // Consider online if active within last 15 minutes AND did not log out after lastActive
+            const isOnline = Boolean(
+                lastActive &&
+                lastActive >= fifteenMinutesAgo &&
+                (!lastLogout || lastActive > lastLogout)
+            );
+
+            const isActiveToday = Boolean(
+                (lastActive && lastActive >= twentyFourHoursAgo) ||
+                (lastLogin && lastLogin >= twentyFourHoursAgo)
+            );
+
+            if (isOnline) {
+                onlineCount++;
+                if (u.role === 'super_admin' || u.role === 'village_admin') {
+                    onlineAdminsCount++;
+                }
+            }
+            if (isActiveToday) {
+                activeTodayCount++;
+            }
+
+            const deviceDetails = parseDevice(u.lastUserAgent);
+
+            return {
+                _id: u._id,
+                name: u.name,
+                mobileNumber: u.mobileNumber,
+                email: u.email,
+                role: u.role,
+                isActive: u.isActive,
+                isOnline,
+                lastLoginAt: u.lastLoginAt,
+                lastActiveAt: u.lastActiveAt,
+                lastLogoutAt: u.lastLogoutAt,
+                lastIpAddress: u.lastIpAddress,
+                device: deviceDetails.device,
+                browser: deviceDetails.browser,
+                os: deviceDetails.os,
+                assignedVillage: u.assignedVillageId ? {
+                    _id: u.assignedVillageId._id,
+                    name: u.assignedVillageId.name,
+                    taluka: u.assignedVillageId.taluka
+                } : null,
+                member: u.memberId ? {
+                    _id: u.memberId._id,
+                    serialNumber: u.memberId.serialNumber,
+                    houseNumber: u.memberId.houseNumber
+                } : null
+            };
+        });
+
+        const totalUsers = await User.countDocuments();
+
+        res.status(200).json({
+            success: true,
+            stats: {
+                onlineCount,
+                activeTodayCount,
+                onlineAdminsCount,
+                totalUsers
+            },
+            data: sessionList
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Force terminate user session (Super Admin only)
+// @route   POST /api/auth/users/:id/terminate-session
+export const terminateSession = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const targetUser = await User.findById(id);
+        if (!targetUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        targetUser.lastLogoutAt = new Date();
+        targetUser.lastActiveAt = new Date(Date.now() - 30 * 60 * 1000); // 30 minutes in past
+        await targetUser.save();
+
+        res.status(200).json({
+            success: true,
+            message: `User (${targetUser.name || targetUser.mobileNumber}) session has been terminated.`
         });
     } catch (error) {
         next(error);

@@ -12,7 +12,11 @@ import {
     adminSetUserPassword,
     changePassword,
     getEligibleMembers,
-    createUserFromMember
+    createUserFromMember,
+    heartbeat,
+    logout,
+    getActiveSessions,
+    terminateSession
 } from '../controllers/authController.js';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
@@ -28,6 +32,8 @@ router.post('/set-password', setPassword);
 router.get('/me', protect, getMe);
 router.put('/profile', protect, updateProfile);
 router.put('/change-password', protect, changePassword);
+router.post('/heartbeat', protect, heartbeat);
+router.post('/logout', protect, logout);
 
 // User management routes (Super Admin & Village Admin)
 router.get('/users', protect, authorizeRoles('super_admin', 'village_admin'), getUsers);
@@ -38,5 +44,7 @@ router.post('/users/:id/set-password', protect, authorizeRoles('super_admin', 'v
 // Super admin exclusive routes
 router.post('/village-admin', protect, authorizeRoles('super_admin'), createVillageAdmin);
 router.patch('/users/:id/role', protect, authorizeRoles('super_admin'), updateUserRole);
+router.get('/active-sessions', protect, authorizeRoles('super_admin'), getActiveSessions);
+router.post('/users/:id/terminate-session', protect, authorizeRoles('super_admin'), terminateSession);
 
 export default router;

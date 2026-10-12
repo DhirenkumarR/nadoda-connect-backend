@@ -18,6 +18,19 @@ export const protect = async (req, res, next) => {
                 const user = await User.findById(decoded.id).populate('assignedVillageId');
                 if (user && user.isActive) {
                     req.user = user;
+
+                    // Asynchronously update activity timestamp (throttled to once every 60s)
+                    const now = new Date();
+                    if (!user.lastActiveAt || (now.getTime() - new Date(user.lastActiveAt).getTime() > 60 * 1000)) {
+                        const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress;
+                        const cleanIp = ip ? String(ip).split(',')[0].trim() : null;
+                        User.findByIdAndUpdate(user._id, {
+                            lastActiveAt: now,
+                            ...(req.headers['user-agent'] ? { lastUserAgent: req.headers['user-agent'] } : {}),
+                            ...(cleanIp ? { lastIpAddress: cleanIp } : {})
+                        }).catch(() => {});
+                    }
+
                     return next();
                 }
             } catch (err) {

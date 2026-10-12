@@ -63,6 +63,29 @@ const UserSchema = new Schema(
         isActive: {
             type: Boolean,
             default: true
+        },
+        // Session & Activity Tracking
+        lastLoginAt: {
+            type: Date,
+            default: null,
+            index: true
+        },
+        lastActiveAt: {
+            type: Date,
+            default: null,
+            index: true
+        },
+        lastLogoutAt: {
+            type: Date,
+            default: null
+        },
+        lastIpAddress: {
+            type: String,
+            default: null
+        },
+        lastUserAgent: {
+            type: String,
+            default: null
         }
     },
     { timestamps: true }
