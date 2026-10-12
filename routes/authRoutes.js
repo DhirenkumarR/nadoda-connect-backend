@@ -10,7 +10,9 @@ import {
     updateUserRole,
     getEmailStatus,
     adminSetUserPassword,
-    changePassword
+    changePassword,
+    getEligibleMembers,
+    createUserFromMember
 } from '../controllers/authController.js';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
@@ -29,6 +31,8 @@ router.put('/change-password', protect, changePassword);
 
 // User management routes (Super Admin & Village Admin)
 router.get('/users', protect, authorizeRoles('super_admin', 'village_admin'), getUsers);
+router.get('/eligible-members', protect, authorizeRoles('super_admin', 'village_admin'), getEligibleMembers);
+router.post('/users/create-from-member', protect, authorizeRoles('super_admin', 'village_admin'), createUserFromMember);
 router.post('/users/:id/set-password', protect, authorizeRoles('super_admin', 'village_admin'), adminSetUserPassword);
 
 // Super admin exclusive routes

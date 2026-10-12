@@ -631,4 +631,234 @@ export const getEmailStatus = (req, res) => {
     });
 };
 
+// @desc    Get members eligible for user account creation
+// @route   GET /api/auth/eligible-members
+export const getEligibleMembers = async (req, res, next) => {
+    try {
+        const { search, villageId, limit = 50 } = req.query;
+        const filter = { verificationStatus: 'approved', isAlive: true };
+
+        // Village Admin scope
+        if (req.user?.role === 'village_admin') {
+            const vId = req.user.assignedVillageId?._id || req.user.assignedVillageId;
+            if (!vId) {
+                return res.status(403).json({ success: false, message: 'No village assigned to this admin account' });
+            }
+            filter.villageId = vId;
+        } else if (villageId) {
+            filter.villageId = villageId;
+        }
+
+        if (search) {
+            const isNumeric = !isNaN(search);
+            const searchConditions = [
+                { 'fullName.gu': new RegExp(search, 'i') },
+                { 'fullName.en': new RegExp(search, 'i') },
+                { mobileNumber: new RegExp(search, 'i') },
+                { 'atak.gu': new RegExp(search, 'i') },
+                { 'atak.en': new RegExp(search, 'i') }
+            ];
+            if (isNumeric) {
+                searchConditions.push({ serialNumber: Number(search) });
+                searchConditions.push({ houseNumber: Number(search) });
+            }
+            filter.$or = searchConditions;
+        }
+
+        const members = await Member.find(filter)
+            .populate('villageId', 'name slug taluka district')
+            .limit(Number(limit))
+            .sort({ serialNumber: 1, createdAt: -1 });
+
+        // Find which members already have user accounts
+        const memberIds = members.map(m => m._id);
+        const mobileNumbers = members.map(m => m.mobileNumber).filter(Boolean);
+
+        const existingUsers = await User.find({
+            $or: [
+                { memberId: { $in: memberIds } },
+                { mobileNumber: { $in: mobileNumbers } }
+            ]
+        }).select('_id memberId mobileNumber email role isPasswordSet');
+
+        const userByMemberId = new Map();
+        const userByMobile = new Map();
+
+        existingUsers.forEach(u => {
+            if (u.memberId) userByMemberId.set(String(u.memberId), u);
+            if (u.mobileNumber) userByMobile.set(u.mobileNumber, u);
+        });
+
+        const results = members.map(m => {
+            const mObj = m.toObject();
+            const existingUser = userByMemberId.get(String(m._id)) || (m.mobileNumber ? userByMobile.get(m.mobileNumber) : null);
+            return {
+                ...mObj,
+                hasUserAccount: Boolean(existingUser),
+                existingUser: existingUser ? {
+                    _id: existingUser._id,
+                    role: existingUser.role,
+                    isPasswordSet: existingUser.isPasswordSet
+                } : null
+            };
+        });
+
+        res.status(200).json({
+            success: true,
+            count: results.length,
+            data: results
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Create a User account directly from a Member record (Super Admin or Village Admin)
+// @route   POST /api/auth/users/create-from-member
+export const createUserFromMember = async (req, res, next) => {
+    try {
+        const { memberId, password, mobileNumber, email, role, name } = req.body;
+
+        if (!memberId) {
+            return res.status(400).json({ success: false, message: 'Member ID is required' });
+        }
+
+        const member = await Member.findById(memberId);
+        if (!member) {
+            return res.status(404).json({ success: false, message: 'Member not found' });
+        }
+
+        // Authorization checks for village_admin
+        if (req.user?.role === 'village_admin') {
+            const adminVillageId = String(req.user.assignedVillageId?._id || req.user.assignedVillageId || '');
+            const memberVillageId = String(member.villageId?._id || member.villageId || '');
+
+            if (adminVillageId !== memberVillageId) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'તમે ફક્ત તમારા ફાળવેલ ગામના સભ્યો માટે જ યુઝર એકાઉન્ટ બનાવી શકો છો (You can only create users for members of your assigned village)'
+                });
+            }
+        }
+
+        const targetMobile = (mobileNumber || member.mobileNumber || '').trim();
+        if (!targetMobile) {
+            return res.status(400).json({
+                success: false,
+                message: 'મોબાઈલ નંબર જરૂરી છે (Mobile number is required to create a user account)'
+            });
+        }
+
+        const targetEmail = (email || member.email || '').trim().toLowerCase() || null;
+        const targetName = (name || member.fullName?.gu || member.fullName?.en || 'Community Member').trim();
+        const targetRole = (req.user?.role === 'super_admin' && role) ? role : 'member';
+
+        // Check if user already exists
+        let existingUser = await User.findOne({
+            $or: [
+                { memberId: member._id },
+                { mobileNumber: targetMobile }
+            ]
+        });
+
+        if (existingUser) {
+            // Check if existing user belongs to a different member
+            if (existingUser.memberId && String(existingUser.memberId) !== String(member._id)) {
+                return res.status(400).json({
+                    success: false,
+                    message: `આ મોબાઈલ નંબર (${targetMobile}) પહેલેથી અન્ય વપરાશકર્તા (${existingUser.name || 'User'}) સાથે જોડાયેલ છે.`
+                });
+            }
+
+            // Update existing user credentials and password
+            existingUser.memberId = member._id;
+            existingUser.familyId = member.familyId;
+            existingUser.assignedVillageId = member.villageId;
+            existingUser.mobileNumber = targetMobile;
+            if (targetEmail) existingUser.email = targetEmail;
+            if (targetName) existingUser.name = targetName;
+            existingUser.isActive = true;
+
+            if (password && password.trim().length >= 6) {
+                const salt = await bcrypt.genSalt(10);
+                existingUser.passwordHash = await bcrypt.hash(password.trim(), salt);
+                existingUser.isPasswordSet = true;
+                existingUser.resetOtp = null;
+                existingUser.resetOtpExpires = null;
+            }
+
+            await existingUser.save();
+
+            // Sync member mobile & email
+            let memberChanged = false;
+            if (member.mobileNumber !== targetMobile) {
+                member.mobileNumber = targetMobile;
+                memberChanged = true;
+            }
+            if (targetEmail && member.email !== targetEmail) {
+                member.email = targetEmail;
+                memberChanged = true;
+            }
+            if (memberChanged) await member.save();
+
+            const populatedUser = await User.findById(existingUser._id)
+                .populate('assignedVillageId', 'name slug taluka district')
+                .populate('memberId', 'fullName mobileNumber email serialNumber houseNumber');
+
+            return res.status(200).json({
+                success: true,
+                message: `સભ્ય (${targetName}) નું યુઝર એકાઉન્ટ પહેલેથી હતું, વિગતો અને પાસવર્ડ સફળતાપૂર્વક અપડેટ થઈ ગયા છે.`,
+                data: populatedUser
+            });
+        }
+
+        // New user creation
+        let passwordHash = null;
+        let isPasswordSet = false;
+        if (password && password.trim().length >= 6) {
+            const salt = await bcrypt.genSalt(10);
+            passwordHash = await bcrypt.hash(password.trim(), salt);
+            isPasswordSet = true;
+        }
+
+        const newUser = await User.create({
+            name: targetName,
+            mobileNumber: targetMobile,
+            email: targetEmail,
+            role: targetRole,
+            assignedVillageId: member.villageId,
+            memberId: member._id,
+            familyId: member.familyId,
+            passwordHash,
+            isPasswordSet,
+            isActive: true
+        });
+
+        // Sync member mobile & email if they were updated/missing
+        let memberChanged = false;
+        if (member.mobileNumber !== targetMobile) {
+            member.mobileNumber = targetMobile;
+            memberChanged = true;
+        }
+        if (targetEmail && member.email !== targetEmail) {
+            member.email = targetEmail;
+            memberChanged = true;
+        }
+        if (memberChanged) await member.save();
+
+        const populatedNewUser = await User.findById(newUser._id)
+            .populate('assignedVillageId', 'name slug taluka district')
+            .populate('memberId', 'fullName mobileNumber email serialNumber houseNumber');
+
+        res.status(201).json({
+            success: true,
+            message: `સભ્ય (${targetName}) માટે યુઝર એકાઉન્ટ સફળતાપૂર્વક બની ગયું છે!`,
+            data: populatedNewUser
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 
