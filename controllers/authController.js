@@ -226,44 +226,51 @@ export const forgotPassword = async (req, res, next) => {
             }
         }
 
-        // 4. Generate 6-digit OTP
+        // 4. Send Email (always uses latest synced email)
+        const targetEmail = (user.email || member?.email || (isEmailInput ? lookupLower : null));
+
+        if (!targetEmail) {
+            return res.status(400).json({
+                success: false,
+                message: 'આ સભ્ય ખાતા સાથે કોઈ ઈમેલ નોંધાયેલ નથી. કૃપા કરીને તમારા ગામના એડમિનનો સંપર્ક કરી પ્રોફાઇલમાં ઈમેલ ઉમેરાવો.'
+            });
+        }
+
+        // Generate 6-digit OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         user.resetOtp = otp;
         user.resetOtpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
         await user.save();
 
-        // 5. Send Email if email is available (always uses latest synced email)
-        const targetEmail = (user.email || member?.email || (isEmailInput ? lookupLower : null));
         let emailSent = false;
         let emailError = null;
 
-        if (targetEmail) {
-            try {
-                const mailRes = await sendOtpEmail({
-                    to: targetEmail,
-                    userName: user.name || 'સભ્ય',
-                    otp
-                });
-                if (mailRes && mailRes.sent) {
-                    emailSent = true;
-                }
-            } catch (mailErr) {
-                emailError = mailErr.message;
-                console.error('[Forgot Password] Email delivery error:', mailErr.message);
+        try {
+            const mailRes = await sendOtpEmail({
+                to: targetEmail,
+                userName: user.name || 'સભ્ય',
+                otp
+            });
+            if (mailRes && mailRes.sent) {
+                emailSent = true;
             }
+        } catch (mailErr) {
+            emailError = mailErr.message;
+            console.error('[Forgot Password] Email delivery error:', mailErr.message);
+        }
+
+        if (!emailSent) {
+            return res.status(500).json({
+                success: false,
+                message: 'વેરિફિકેશન ઈમેલ મોકલવામાં તકનીકી ખામી આવી છે. કૃપા કરીને થોડીવાર પછી પ્રયાસ કરો અથવા એડમિનનો સંપર્ક કરો.'
+            });
         }
 
         res.status(200).json({
             success: true,
-            message: emailSent
-                ? `વેરિફિકેશન કોડ તમારા ઈમેલ (${targetEmail}) પર મોકલી દેવામાં આવ્યો છે.`
-                : (targetEmail
-                    ? `ઈમેલ સર્વિસ અનુપલબ્ધ હોવાથી, તમારો વેરિફિકેશન કોડ છે: ${otp}`
-                    : `વેરિફિકેશન કોડ તૈયાર છે. તમારો કોડ છે: ${otp}`),
-            otp: emailSent ? undefined : otp,
+            message: `વેરિફિકેશન કોડ તમારા ઈમેલ (${targetEmail}) પર મોકલી દેવામાં આવ્યો છે. કૃપા કરીને તમારું ઇનબોક્સ ચેક કરો.`,
             mobileNumber: user.mobileNumber,
-            email: user.email || targetEmail,
-            emailSent,
+            email: targetEmail,
             isNewUser: !user.isPasswordSet
         });
     } catch (error) {
