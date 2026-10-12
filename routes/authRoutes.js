@@ -7,13 +7,15 @@ import {
     getMe,
     updateProfile,
     getUsers,
-    updateUserRole
+    updateUserRole,
+    getEmailStatus
 } from '../controllers/authController.js';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
 // Public auth routes
+router.get('/email-status', getEmailStatus);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.post('/set-password', setPassword);

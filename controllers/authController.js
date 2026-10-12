@@ -488,3 +488,22 @@ export const updateUserRole = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Check email service configuration status (diagnostics)
+// @route   GET /api/auth/email-status
+export const getEmailStatus = (req, res) => {
+    const hasResend = Boolean(process.env.RESEND_API_KEY);
+    const hasBrevo = Boolean(process.env.BREVO_API_KEY);
+    const emailUser = process.env.EMAIL_USER || process.env.GMAIL_USER;
+    const hasSmtpPass = Boolean(process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD);
+
+    res.status(200).json({
+        success: true,
+        activeProvider: hasResend ? 'Resend (HTTPS 443)' : (hasBrevo ? 'Brevo (HTTPS 443)' : (emailUser ? 'Gmail SMTP' : 'None (Credentials missing in environment variables)')),
+        hasHttpsApi: hasResend || hasBrevo,
+        smtpConfigured: Boolean(emailUser && hasSmtpPass),
+        smtpAccount: emailUser ? `${emailUser.slice(0, 3)}***${emailUser.slice(emailUser.indexOf('@'))}` : null
+    });
+};
+
+
