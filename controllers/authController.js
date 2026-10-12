@@ -457,12 +457,137 @@ export const getMe = async (req, res, next) => {
     }
 };
 
-// @desc    Get all registered users (Super Admin only)
+// @desc    Get registered users (Super Admin can view all, Village Admin views their village members)
 // @route   GET /api/auth/users
 export const getUsers = async (req, res, next) => {
     try {
-        const users = await User.find().populate('assignedVillageId').sort({ createdAt: -1 });
+        const filter = {};
+
+        // If village admin, only show users belonging to their assigned village
+        if (req.user?.role === 'village_admin') {
+            const vId = req.user.assignedVillageId?._id || req.user.assignedVillageId;
+            if (!vId) {
+                return res.status(403).json({ success: false, message: 'No village assigned to this admin account' });
+            }
+            filter.assignedVillageId = vId;
+            filter.role = 'member'; // Village admins manage members
+        }
+
+        const users = await User.find(filter)
+            .populate('assignedVillageId', 'name slug taluka district')
+            .populate('memberId', 'fullName mobileNumber email serialNumber houseNumber')
+            .sort({ createdAt: -1 });
+
         res.status(200).json({ success: true, count: users.length, data: users });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Admin sets or resets password directly for a user (Super Admin or Village Admin)
+// @route   POST /api/auth/users/:id/set-password
+export const adminSetUserPassword = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { newPassword } = req.body;
+
+        if (!newPassword || newPassword.trim().length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'પાસવર્ડ ઓછામાં ઓછો ૬ અક્ષરનો હોવો જોઈએ (Password must be at least 6 characters)'
+            });
+        }
+
+        const targetUser = await User.findById(id);
+        if (!targetUser) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // Authorization checks for village_admin
+        if (req.user?.role === 'village_admin') {
+            if (targetUser.role !== 'member') {
+                return res.status(403).json({
+                    success: false,
+                    message: 'ગામ એડમિન ફક્ત સામાન્ય સભ્યોનો પાસવર્ડ સેટ કરી શકે છે (Village admin can only set password for members)'
+                });
+            }
+
+            const adminVillageId = String(req.user.assignedVillageId?._id || req.user.assignedVillageId || '');
+            const targetVillageId = String(targetUser.assignedVillageId?._id || targetUser.assignedVillageId || '');
+
+            if (adminVillageId !== targetVillageId) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'તમે ફક્ત તમારા ફાળવેલ ગામના સભ્યોનો પાસવર્ડ સેટ કરી શકો છો (Forbidden: Not in your assigned village)'
+                });
+            }
+        }
+
+        // Hash new password and save
+        const salt = await bcrypt.genSalt(10);
+        targetUser.passwordHash = await bcrypt.hash(newPassword.trim(), salt);
+        targetUser.isPasswordSet = true;
+        targetUser.resetOtp = null;
+        targetUser.resetOtpExpires = null;
+        await targetUser.save();
+
+        res.status(200).json({
+            success: true,
+            message: `સભ્ય (${targetUser.name || targetUser.mobileNumber}) માટે નવો પાસવર્ડ સફળતાપૂર્વક સેટ થઈ ગયો છે.`
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Change password using old password (Any logged in user)
+// @route   PUT /api/auth/change-password
+export const changePassword = async (req, res, next) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+
+        if (!newPassword || newPassword.trim().length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'નવો પાસવર્ડ ઓછામાં ઓછો ૬ અક્ષરનો હોવો જોઈએ (New password must be at least 6 characters)'
+            });
+        }
+
+        const user = await User.findById(req.user._id).select('+passwordHash');
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        // If the user already has a password set, verify oldPassword
+        if (user.isPasswordSet && user.passwordHash) {
+            if (!oldPassword) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'હાલનો જૂનો પાસવર્ડ દાખલ કરવો જરૂરી છે (Current password is required)'
+                });
+            }
+
+            const isMatch = await user.matchPassword(oldPassword);
+            if (!isMatch) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'હાલનો પાસવર્ડ ખોટો છે (Current password is incorrect)'
+                });
+            }
+        }
+
+        // Hash new password and save
+        const salt = await bcrypt.genSalt(10);
+        user.passwordHash = await bcrypt.hash(newPassword.trim(), salt);
+        user.isPasswordSet = true;
+        user.resetOtp = null;
+        user.resetOtpExpires = null;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'પાસવર્ડ સફળતાપૂર્વક બદલાઈ ગયો છે! (Password changed successfully)'
+        });
     } catch (error) {
         next(error);
     }

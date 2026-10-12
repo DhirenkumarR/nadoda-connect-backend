@@ -8,7 +8,9 @@ import {
     updateProfile,
     getUsers,
     updateUserRole,
-    getEmailStatus
+    getEmailStatus,
+    adminSetUserPassword,
+    changePassword
 } from '../controllers/authController.js';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
@@ -23,10 +25,14 @@ router.post('/set-password', setPassword);
 // Protected user routes
 router.get('/me', protect, getMe);
 router.put('/profile', protect, updateProfile);
+router.put('/change-password', protect, changePassword);
 
-// Super admin routes
+// User management routes (Super Admin & Village Admin)
+router.get('/users', protect, authorizeRoles('super_admin', 'village_admin'), getUsers);
+router.post('/users/:id/set-password', protect, authorizeRoles('super_admin', 'village_admin'), adminSetUserPassword);
+
+// Super admin exclusive routes
 router.post('/village-admin', protect, authorizeRoles('super_admin'), createVillageAdmin);
-router.get('/users', protect, authorizeRoles('super_admin'), getUsers);
 router.patch('/users/:id/role', protect, authorizeRoles('super_admin'), updateUserRole);
 
 export default router;
