@@ -1,5 +1,6 @@
 import { ApprovalRequest, Member, Family } from '../models/index.js';
 import { recalculateVillageStats } from '../services/statsService.js';
+import { syncMemberWithUser } from '../services/userSyncService.js';
 
 // @desc    List approval requests with filtering
 // @route   GET /api/approvals
@@ -118,13 +119,25 @@ export const approveRequest = async (req, res, next) => {
                     reviewedAt: new Date()
                 });
             } else if (request.requestType === 'update' && request.targetId) {
-                await Member.findByIdAndUpdate(request.targetId, {
+                const targetMember = await Member.findById(request.targetId);
+                const oldMobile = targetMember?.mobileNumber;
+                const oldEmail = targetMember?.email;
+
+                const updatedMember = await Member.findByIdAndUpdate(request.targetId, {
                     ...request.payload,
                     verificationStatus: 'approved',
                     pendingUpdates: null,
                     reviewedBy: req.user?._id,
                     reviewedAt: new Date()
-                });
+                }, { new: true });
+
+                if (updatedMember) {
+                    try {
+                        await syncMemberWithUser(updatedMember, oldMobile, oldEmail);
+                    } catch (syncErr) {
+                        console.error('[approveRequest] Error syncing member with user:', syncErr.message);
+                    }
+                }
             } else if (request.requestType === 'delete' && request.targetId) {
                 await Member.findByIdAndDelete(request.targetId);
             }

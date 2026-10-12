@@ -29,7 +29,7 @@ export const login = async (req, res, next) => {
         }
 
         // Find user by mobile or email
-        const user = await User.findOne({
+        let user = await User.findOne({
             $or: [
                 { mobileNumber: lookup },
                 { email: lookup.toLowerCase() }
@@ -37,7 +37,7 @@ export const login = async (req, res, next) => {
         }).select('+passwordHash').populate('assignedVillageId');
 
         if (!user) {
-            // Check if member exists in Member directory but user account wasn't activated yet
+            // Check if member exists in Member directory (e.g. member email or mobile was updated)
             const memberExists = await Member.findOne({
                 $or: [
                     { mobileNumber: lookup },
@@ -46,17 +46,34 @@ export const login = async (req, res, next) => {
             });
 
             if (memberExists) {
-                return res.status(400).json({
+                // Check if user account exists with memberId or previously registered email/mobile
+                user = await User.findOne({
+                    $or: [
+                        { memberId: memberExists._id },
+                        ...(memberExists.mobileNumber ? [{ mobileNumber: memberExists.mobileNumber }] : []),
+                        ...(memberExists.email ? [{ email: memberExists.email.toLowerCase() }] : [])
+                    ]
+                }).select('+passwordHash').populate('assignedVillageId');
+
+                if (user) {
+                    // Update user's email and mobile to match member
+                    if (memberExists.email) user.email = memberExists.email.toLowerCase().trim();
+                    if (memberExists.mobileNumber) user.mobileNumber = memberExists.mobileNumber.trim();
+                    user.memberId = memberExists._id;
+                    await user.save();
+                } else {
+                    return res.status(400).json({
+                        success: false,
+                        needsPasswordSetup: true,
+                        message: 'Your member profile is registered! Please use "Set Password / Forgot Password" below to activate your account and create your password.'
+                    });
+                }
+            } else {
+                return res.status(401).json({
                     success: false,
-                    needsPasswordSetup: true,
-                    message: 'Your member profile is registered! Please use "Set Password / Forgot Password" below to activate your account and create your password.'
+                    message: 'No registered member or admin account found with this Mobile/Email. Registration is managed strictly by administrators.'
                 });
             }
-
-            return res.status(401).json({
-                success: false,
-                message: 'No registered member or admin account found with this Mobile/Email. Registration is managed strictly by administrators.'
-            });
         }
 
         if (!user.isActive) {
@@ -120,51 +137,85 @@ export const forgotPassword = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Please enter your registered mobile number or email' });
         }
 
-        let user = await User.findOne({
+        const isEmailInput = lookup.includes('@');
+        const lookupLower = lookup.toLowerCase();
+
+        // 1. Search Member directory by mobile or email
+        let member = await Member.findOne({
             $or: [
                 { mobileNumber: lookup },
-                { email: lookup.toLowerCase() }
+                { email: lookupLower }
             ]
         });
 
-        // If not in User collection, check Member collection
-        if (!user) {
-            const member = await Member.findOne({
-                $or: [
-                    { mobileNumber: lookup },
-                    { email: lookup.toLowerCase() }
-                ]
-            });
+        // 2. Search User collection by lookup or by linked memberId
+        let user = await User.findOne({
+            $or: [
+                { mobileNumber: lookup },
+                { email: lookupLower },
+                ...(member ? [{ memberId: member._id }] : [])
+            ]
+        });
 
-            if (!member) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'No member record found with this Mobile/Email in the community directory. Only administrators can add members.'
-                });
-            }
-
-            // Check if a User already exists with this member's mobile number or email
+        // If user not found yet, but member was found, look for user by member's other identifiers
+        if (!user && member) {
             user = await User.findOne({
                 $or: [
                     ...(member.mobileNumber ? [{ mobileNumber: member.mobileNumber }] : []),
                     ...(member.email ? [{ email: member.email.toLowerCase() }] : [])
                 ]
             });
+        }
 
+        // If user was found, but member wasn't found by lookup, find member via user.memberId / mobileNumber
+        if (user && !member) {
+            if (user.memberId) {
+                member = await Member.findById(user.memberId);
+            } else if (user.mobileNumber) {
+                member = await Member.findOne({ mobileNumber: user.mobileNumber });
+            }
+        }
+
+        // If neither user nor member exists
+        if (!user && !member) {
+            return res.status(404).json({
+                success: false,
+                message: 'No member record found with this Mobile/Email in the community directory. Only administrators can add members.'
+            });
+        }
+
+        // 3. Fully synchronize User and Member records
+        if (member) {
             if (user) {
-                // Link missing fields
-                if (!user.email && (member.email || lookup.includes('@'))) {
-                    user.email = member.email || lookup.toLowerCase();
+                user.memberId = member._id;
+                if (member.familyId) user.familyId = member.familyId;
+                if (member.villageId && (!user.assignedVillageId || user.role === 'member')) {
+                    user.assignedVillageId = member.villageId;
                 }
-                if (!user.memberId) user.memberId = member._id;
-                if (!user.familyId) user.familyId = member.familyId;
-                if (!user.assignedVillageId) user.assignedVillageId = member.villageId;
+
+                // Keep user email in sync with Member's latest email!
+                if (member.email) {
+                    user.email = member.email.toLowerCase().trim();
+                } else if (isEmailInput) {
+                    user.email = lookupLower;
+                    member.email = lookupLower;
+                    await member.save();
+                }
+
+                // Keep user mobile in sync with Member's latest mobile!
+                if (member.mobileNumber) {
+                    user.mobileNumber = member.mobileNumber.trim();
+                }
+
+                if (member.fullName?.gu || member.fullName?.en) {
+                    user.name = member.fullName.gu || member.fullName.en;
+                }
                 await user.save();
             } else {
-                // Create User account linked to Member
+                // Create user account linked to member
                 user = await User.create({
                     mobileNumber: member.mobileNumber || lookup,
-                    email: member.email || (lookup.includes('@') ? lookup.toLowerCase() : null),
+                    email: member.email ? member.email.toLowerCase().trim() : (isEmailInput ? lookupLower : null),
                     name: member.fullName?.gu || member.fullName?.en || 'Community Member',
                     role: 'member',
                     assignedVillageId: member.villageId,
@@ -175,32 +226,40 @@ export const forgotPassword = async (req, res, next) => {
             }
         }
 
-        // Generate 6-digit OTP
+        // 4. Generate 6-digit OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         user.resetOtp = otp;
         user.resetOtpExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 mins
         await user.save();
 
-        // Send Email if email is available
-        const targetEmail = user.email || (lookup.includes('@') ? lookup.toLowerCase() : null);
+        // 5. Send Email if email is available (always uses latest synced email)
+        const targetEmail = (user.email || member?.email || (isEmailInput ? lookupLower : null));
         let emailSent = false;
+        let emailError = null;
+
         if (targetEmail) {
-            emailSent = true;
-            // Dispatch email asynchronously so client receives an instantaneous response without loading delay
-            sendOtpEmail({
-                to: targetEmail,
-                userName: user.name || 'સભ્ય',
-                otp
-            }).catch((mailErr) => {
-                console.error('[Forgot Password] Email delivery background error:', mailErr.message);
-            });
+            try {
+                const mailRes = await sendOtpEmail({
+                    to: targetEmail,
+                    userName: user.name || 'સભ્ય',
+                    otp
+                });
+                if (mailRes && mailRes.sent) {
+                    emailSent = true;
+                }
+            } catch (mailErr) {
+                emailError = mailErr.message;
+                console.error('[Forgot Password] Email delivery error:', mailErr.message);
+            }
         }
 
         res.status(200).json({
             success: true,
-            message: targetEmail && emailSent
+            message: emailSent
                 ? `વેરિફિકેશન કોડ તમારા ઈમેલ (${targetEmail}) પર મોકલી દેવામાં આવ્યો છે.`
-                : `વેરિફિકેશન કોડ તૈયાર છે. તમારો કોડ છે: ${otp}`,
+                : (targetEmail
+                    ? `ઈમેલ સર્વિસ અનુપલબ્ધ હોવાથી, તમારો વેરિફિકેશન કોડ છે: ${otp}`
+                    : `વેરિફિકેશન કોડ તૈયાર છે. તમારો કોડ છે: ${otp}`),
             otp: emailSent ? undefined : otp,
             mobileNumber: user.mobileNumber,
             email: user.email || targetEmail,
@@ -247,12 +306,30 @@ export const setPassword = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long' });
         }
 
-        const user = await User.findOne({
+        let user = await User.findOne({
             $or: [
                 { mobileNumber: lookup },
                 { email: lookup.toLowerCase() }
             ]
         }).select('+passwordHash');
+
+        if (!user) {
+            const member = await Member.findOne({
+                $or: [
+                    { mobileNumber: lookup },
+                    { email: lookup.toLowerCase() }
+                ]
+            });
+            if (member) {
+                user = await User.findOne({
+                    $or: [
+                        { memberId: member._id },
+                        ...(member.mobileNumber ? [{ mobileNumber: member.mobileNumber }] : []),
+                        ...(member.email ? [{ email: member.email.toLowerCase() }] : [])
+                    ]
+                }).select('+passwordHash');
+            }
+        }
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });

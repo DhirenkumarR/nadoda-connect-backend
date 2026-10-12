@@ -1,5 +1,6 @@
 import { Member, Family, User } from '../models/index.js';
 import { recalculateVillageStats } from '../services/statsService.js';
+import { syncMemberWithUser } from '../services/userSyncService.js';
 
 // @desc    Search and filter community members
 // @route   GET /api/members
@@ -201,6 +202,9 @@ export const updateMember = async (req, res, next) => {
             }
         }
 
+        const oldMobile = member.mobileNumber;
+        const oldEmail = member.email;
+
         const updates = { ...req.body };
         if (req.user?.role === 'member') {
             delete updates.villageId;
@@ -214,6 +218,13 @@ export const updateMember = async (req, res, next) => {
 
         if (req.body.isFamilyHead) {
             await Family.findByIdAndUpdate(member.familyId, { headMemberId: member._id });
+        }
+
+        // Synchronize updated email and mobile to related User login account
+        try {
+            await syncMemberWithUser(member, oldMobile, oldEmail);
+        } catch (syncErr) {
+            console.error('[updateMember] Error syncing member with user:', syncErr.message);
         }
 
         // Recalculate village stats
