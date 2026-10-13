@@ -173,22 +173,10 @@ export const getMyFamily = async (req, res, next) => {
                 req.user.familyId = member.familyId;
                 req.user.memberId = member._id;
                 await req.user.save();
-            } else if (req.user?.role === 'super_admin') {
-                const defaultFam = await Family.findOne({ houseNumber: 172 }) || await Family.findOne({ isActive: true });
-                if (defaultFam) {
-                    familyId = defaultFam._id;
-                    req.user.familyId = defaultFam._id;
-                    await req.user.save();
-                } else {
-                    return res.status(404).json({
-                        success: false,
-                        message: 'No family record linked to your account yet.'
-                    });
-                }
             } else {
                 return res.status(404).json({
                     success: false,
-                    message: 'No family record linked to your account yet. Please contact your village administrator.'
+                    message: 'No family record linked to your account yet.'
                 });
             }
         }
