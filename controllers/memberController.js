@@ -152,7 +152,8 @@ export const createMember = async (req, res, next) => {
         const member = await Member.create(memberData);
 
         // Update family members count and head if needed
-        family.totalMembersCount = (family.totalMembersCount || 0) + 1;
+        const actualMembersCount = await Member.countDocuments({ familyId: family._id, isAlive: true });
+        family.totalMembersCount = actualMembersCount;
         if (isFamilyHead || !family.headMemberId) {
             family.headMemberId = member._id;
         }
@@ -275,7 +276,7 @@ export const deleteMember = async (req, res, next) => {
         // Update family members count
         const family = await Family.findById(familyId);
         if (family) {
-            family.totalMembersCount = Math.max(0, (family.totalMembersCount || 1) - 1);
+            family.totalMembersCount = await Member.countDocuments({ familyId: family._id, isAlive: true });
             if (String(family.headMemberId) === String(member._id)) {
                 // Find next member in family to set as head
                 const nextHead = await Member.findOne({ familyId, isAlive: true });
