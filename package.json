@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Backend API for Nadoda Rajput Community Platform (Nadoda Rajput Connect)",
   "license": "ISC",
-  "author": "Dhiren Rathod",
+  "author": "Dhirenkumar Rathod",
   "type": "module",
   "main": "index.js",
   "scripts": {

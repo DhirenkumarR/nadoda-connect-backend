@@ -137,11 +137,11 @@ const MemberSchema = new Schema(
             partnerExpectations: { type: String, default: null }
         },
 
-        // --- APPROVAL WORKFLOW FOR ADMIN REVIEW ---
+        // Verification status (defaults to approved)
         verificationStatus: {
             type: String,
             enum: ['pending', 'approved', 'rejected'],
-            default: 'approved', // Seeded data is pre-approved; user self-registrations start as 'pending'
+            default: 'approved',
             index: true
         },
         submittedBy: {

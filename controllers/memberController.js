@@ -104,7 +104,8 @@ export const createMember = async (req, res, next) => {
         const { villageId, familyId, isFamilyHead } = req.body;
 
         // Role check
-        if (req.user?.role === 'village_admin' && String(req.user.assignedVillageId._id) !== String(villageId)) {
+        const adminVillageId = req.user?.assignedVillageId?._id ? String(req.user.assignedVillageId._id) : String(req.user?.assignedVillageId || '');
+        if (req.user?.role === 'village_admin' && adminVillageId !== String(villageId)) {
             return res.status(403).json({
                 success: false,
                 message: 'Forbidden: You can only create members in your assigned village'
@@ -185,7 +186,8 @@ export const updateMember = async (req, res, next) => {
         }
 
         // Role check
-        if (req.user?.role === 'village_admin' && String(req.user.assignedVillageId._id) !== String(member.villageId)) {
+        const adminVillageId = req.user?.assignedVillageId?._id ? String(req.user.assignedVillageId._id) : String(req.user?.assignedVillageId || '');
+        if (req.user?.role === 'village_admin' && adminVillageId !== String(member.villageId)) {
             return res.status(403).json({
                 success: false,
                 message: 'Forbidden: You can only edit members in your assigned village'
@@ -246,7 +248,8 @@ export const deleteMember = async (req, res, next) => {
         }
 
         // Role check
-        if (req.user?.role === 'village_admin' && String(req.user.assignedVillageId._id) !== String(member.villageId)) {
+        const adminVillageId = req.user?.assignedVillageId?._id ? String(req.user.assignedVillageId._id) : String(req.user?.assignedVillageId || '');
+        if (req.user?.role === 'village_admin' && adminVillageId !== String(member.villageId)) {
             return res.status(403).json({
                 success: false,
                 message: 'Forbidden: You can only delete members in your assigned village'

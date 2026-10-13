@@ -56,11 +56,11 @@ const FamilySchema = new Schema(
             type: Number,
             default: 0
         },
-        // Approval workflow for when a new family is submitted via mobile/web
+        // Verification status (defaults to approved)
         verificationStatus: {
             type: String,
             enum: ['pending', 'approved', 'rejected'],
-            default: 'approved', // seeded families default to approved
+            default: 'approved',
             index: true
         },
         submittedBy: {
