@@ -21,6 +21,14 @@ export const getFamilies = async (req, res, next) => {
 
         if (search) {
             const isNumeric = !isNaN(search);
+            const matchedMembers = await Member.find({
+                $or: [
+                    { 'fullName.gu': new RegExp(search, 'i') },
+                    { 'fullName.en': new RegExp(search, 'i') }
+                ]
+            }).select('familyId').limit(50);
+            const memberFamilyIds = matchedMembers.map(m => m.familyId).filter(Boolean);
+
             const searchConditions = [
                 { primaryMobile: new RegExp(search, 'i') },
                 { 'atak.gu': new RegExp(search, 'i') },
@@ -28,6 +36,9 @@ export const getFamilies = async (req, res, next) => {
                 { 'kuldevi.gu': new RegExp(search, 'i') },
                 { 'kuldevi.en': new RegExp(search, 'i') }
             ];
+            if (memberFamilyIds.length > 0) {
+                searchConditions.push({ _id: { $in: memberFamilyIds } });
+            }
             if (isNumeric) {
                 searchConditions.push({ houseNumber: Number(search) });
             }
@@ -162,6 +173,18 @@ export const getMyFamily = async (req, res, next) => {
                 req.user.familyId = member.familyId;
                 req.user.memberId = member._id;
                 await req.user.save();
+            } else if (req.user?.role === 'super_admin') {
+                const defaultFam = await Family.findOne({ houseNumber: 172 }) || await Family.findOne({ isActive: true });
+                if (defaultFam) {
+                    familyId = defaultFam._id;
+                    req.user.familyId = defaultFam._id;
+                    await req.user.save();
+                } else {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'No family record linked to your account yet.'
+                    });
+                }
             } else {
                 return res.status(404).json({
                     success: false,
